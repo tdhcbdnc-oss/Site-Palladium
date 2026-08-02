@@ -90,6 +90,20 @@ SLOT_IMAGES = {
  },
 }
 
+# Дополнительные разделы, которых нет в экспорте канваса. Лежат отдельными
+# файлами в build/extra-cases/ — правятся как обычный HTML, без лазания в сборщик.
+# Вставляются скриптом-хранителем после указанного раздела; тогда же в строку
+# навигации добавляются якоря. Дублируются в build/prerender/ для роботов без JS.
+EXTRA_SECTIONS = {
+ "cases.html": {
+   "after": "c2",                       # вставить после этого раздела
+   "files": ["case3.html", "case4.html"],
+   "marker": "c4",                      # если уже есть — не вставлять повторно
+   "nav_after": "#c2",                  # куда в строке навигации добавить якоря
+   "nav": [("#c3", "Закупки"), ("#c4", "Контроль звонков")],
+ },
+}
+
 # Слоты под изображения, которые не нужны вовсе: картинки туда не планируются,
 # а пустой слот занимает место и рисует рамку с засечками. Убираем весь блок
 # .blueprint (рамка + угловые засечки + отступ), а не только сам слот.
@@ -149,6 +163,26 @@ def slot_images_for(page):
         else:
             print(f"  ! {page}: файла {rel} нет — слот {slot_id} оставлен пустым")
     return out
+
+
+# Разделы читаются с диска; если файла нет — сборка сообщает и продолжает.
+def extra_for(page):
+    conf = EXTRA_SECTIONS.get(page)
+    if not conf:
+        return None
+    parts = []
+    for name in conf["files"]:
+        f = pathlib.Path(__file__).resolve().parent / "extra-cases" / name
+        if f.exists():
+            parts.append(f.read_text(encoding="utf-8").strip())
+        else:
+            print(f"  ! {page}: нет файла раздела {name}")
+    if not parts:
+        return None
+    return {"after": conf["after"], "marker": conf["marker"],
+            "navAfter": conf["nav_after"],
+            "nav": [{"href": h, "label": l} for h, l in conf["nav"]],
+            "html": "\n".join(parts)}
 
 
 # ---------------------------------------------------------------- JSON-LD
@@ -449,6 +483,34 @@ GUARD = """<script>(function(){
     var t=el.getBoundingClientRect().top;
     if(t<=-150||t>=150)startGlide();
   }
+  // Разделы, которых нет в экспорте канваса: вставляем после указанного и
+  // добавляем якоря в строку навигации. Рантайм пересобирает страницу, поэтому
+  // функция идемпотентна и вызывается на каждом тике синхронизации.
+  function addExtra(){
+    if(!C.extra||!C.extra.html)return;
+    if(!document.getElementById(C.extra.marker)){
+      var host=document.getElementById(C.extra.after);
+      if(host)host.insertAdjacentHTML('afterend',C.extra.html);
+    }
+    var row=document.querySelector('nav [data-navlinks]');
+    if(!row||!C.extra.nav)return;
+    var proto=row.querySelector('a[href^="#"]');
+    var prev=row.querySelector('a[href="'+C.extra.navAfter+'"]')||proto;
+    for(var i=0;i<C.extra.nav.length;i++){
+      var it=C.extra.nav[i];
+      if(row.querySelector('a[href="'+it.href+'"]'))continue;
+      var a=document.createElement('a');
+      a.setAttribute('href',it.href);
+      a.textContent=it.label;
+      if(proto){
+        var st=proto.getAttribute('style'); if(st)a.setAttribute('style',st);
+        var sh=proto.getAttribute('style-hover'); if(sh)a.setAttribute('style-hover',sh);
+      }
+      if(prev&&prev.parentNode===row)prev.insertAdjacentElement('afterend',a);
+      else row.appendChild(a);
+      prev=a;
+    }
+  }
   function scrollers(){
     var list=document.querySelectorAll('nav [data-navlinks]');
     if(list.length)return list;
@@ -482,6 +544,7 @@ GUARD = """<script>(function(){
       var val=more>4?'1':'0';
       if(sc.getAttribute('data-more')!==val)sc.setAttribute('data-more',val);
     }
+    addExtra();
     fixSlots();
     fixLd();
     fixWa();
@@ -559,6 +622,7 @@ def build():
           "wa": {"num": WA_NUM, "text": WA_TEXT},
           "slotImages": slot_images_for(name),
           "hiddenSlots": HIDDEN_SLOTS.get(name, []),
+          "extra": extra_for(name),
         }, ensure_ascii=False)
 
         # 7. Метрика + скрипт-хранитель перед </body>
