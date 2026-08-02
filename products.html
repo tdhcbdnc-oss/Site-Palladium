@@ -558,6 +558,25 @@ document.addEventListener('DOMContentLoaded', async function() {
         if(bp)bp.classList.add('pd-nofilter');
       }
     }
+    // Пропорция бокса — по самой картинке. Дизайн-система на мобильном ставит
+    // [data-photo]{aspect-ratio:4/3 !important}, и широкие скриншоты обрезались
+    // по бокам до 42%. Инлайн с !important перебивает правило таблицы стилей.
+    // Ставим везде, не только на мобильном: кадрирования не должно быть нигде.
+    var imgs=document.querySelectorAll('img.pd-slotimg');
+    for(var n=0;n<imgs.length;n++){
+      (function(im){
+        function fit(){
+          if(!im.naturalWidth||!im.naturalHeight)return;
+          var box=im.parentElement;
+          if(!box)return;
+          var want=im.naturalWidth+' / '+im.naturalHeight;
+          if(box.style.getPropertyValue('aspect-ratio')!==want)
+            box.style.setProperty('aspect-ratio',want,'important');
+        }
+        if(im.complete)fit();
+        if(!im.dataset.pdFit){im.dataset.pdFit='1';im.addEventListener('load',fit);}
+      })(imgs[n]);
+    }
     // Ненужные слоты: прячем весь блок .blueprint — иначе останется пустая
     // рамка с засечками и её отступ. Если обёртки нет, поднимаемся на два
     // уровня: слот → контейнер с пропорцией → блок.
