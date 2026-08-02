@@ -32,6 +32,16 @@ TODAY = datetime.date.today().isoformat()
 # Номер счётчика Яндекс.Метрики (стоит с 31.07.2026).
 METRIKA_ID = "111244444"
 
+# Коды подтверждения прав на сайт. Когда Тимур заведёт сайт в кабинетах,
+# вписать содержимое content их мета-тегов — сборка добавит теги в <head>.
+# Яндекс.Вебмастер: <meta name="yandex-verification" content="...">
+# Google Search Console: <meta name="google-site-verification" content="...">
+YANDEX_VERIFICATION = None
+GOOGLE_VERIFICATION = None
+
+# Ключ IndexNow (файл <KEY>.txt лежит в корне сайта, пинг — build/indexnow.py).
+INDEXNOW_KEY = "4f09da33b91242458960eef9a7806525"
+
 WA_NUM = "79490209308"
 WA_TEXT = "Здравствуйте! Хочу записаться на 30-минутный разбор."
 
@@ -40,14 +50,25 @@ FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox
  "%3Ctext x='32' y='45' font-family='Helvetica,Arial,sans-serif' font-size='38' font-weight='700'"
  " fill='%235980a6' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E")
 
+# Для каждой страницы два заголовка: title — поисковый (запрос в начале, читает
+# робот и выдача), og_title — брендовый (читает человек в превью мессенджера).
+# Описания несут и запросные слова, и оффер: их видно в сниппете выдачи.
 PAGES = {
  "index.html": ("Palladium Site (offline).html",
+  "Внедрение AI в бизнес под ключ: аудит, автоматизация, сопровождение — Palladium",
   "Palladium — технологический департамент для вашей компании",
-  "Проектируем AI-систему под ваши процессы, держим её работающей и обучаем людей ею пользоваться. Всё остаётся в вашей собственности — на ваших серверах и в ваших аккаунтах.", "/"),
- "cases.html": ("Palladium Cases (offline).html", "Кейсы — Palladium",
-  "Что именно менялось в работе: недвижимость и видеопродакшн. Что было до, что стало после и что конкретно для этого внедрили — без «увеличили эффективность».", "/cases.html"),
- "products.html": ("Palladium Products (offline).html", "12 продуктов — Palladium",
-  "Четыре ступени: от первого аудита до AI-управляемой компании. Каждый продукт — самостоятельный результат, а не этап бесконечного проекта. Сроки, оплата и KPI по каждому.", "/products.html"),
+  "Внедрение AI в бизнес: чат-боты, голосовые агенты, автоматизация процессов, локальные нейросети. Система остаётся в вашей собственности, первые результаты за 1–3 недели. Бесплатный 30-минутный разбор.",
+  "/"),
+ "cases.html": ("Palladium Cases (offline).html",
+  "Кейсы внедрения AI: недвижимость, видеопродакшн, закупки, контроль звонков — Palladium",
+  "Кейсы — Palladium",
+  "Реальные кейсы внедрения AI: ответ на заявку за минуту, рекламные ролики без съёмочной группы, подбор поставщиков за ночь, разбор каждого звонка отдела продаж. Что было, что стало, что внедрили.",
+  "/cases.html"),
+ "products.html": ("Palladium Products (offline).html",
+  "12 продуктов внедрения AI: от аудита до AI-управляемой компании — Palladium",
+  "12 продуктов — Palladium",
+  "Внедрение AI по ступеням: аудит, быстрые автоматизации, AI-оснащение отделов, цифровой двойник компании. Сроки, оплата и KPI по каждому из 12 продуктов. Начать можно с любой ступени.",
+  "/products.html"),
 }
 
 LINKS = [("Palladium%20Site.dc.html","index.html"),("Palladium Site.dc.html","index.html"),
@@ -194,6 +215,8 @@ ORG = {
  "description": "AI-интегратор: проектируем, внедряем и сопровождаем AI-системы, "
                 "которые остаются в собственности клиента — на его серверах и в его аккаунтах.",
  "email": "info@palladium.com.ru", "telephone": "+79490209308",
+ "address": {"@type": "PostalAddress", "addressLocality": "Донецк", "addressCountry": "RU"},
+ "areaServed": "RU",
  "contactPoint": {"@type": "ContactPoint", "telephone": "+79490209308",
                   "contactType": "sales", "availableLanguage": ["Russian"]},
  "sameAs": ["https://t.me/ShirinTimur"],
@@ -263,15 +286,29 @@ def crumbs(name, path):
               {"@type": "ListItem", "position": 1, "name": "Главная", "item": BASE + "/"},
               {"@type": "ListItem", "position": 2, "name": name, "item": BASE + path}]}
 
+CASES_LIST = {
+ "@context": "https://schema.org", "@type": "ItemList",
+ "name": "Кейсы внедрения AI — Palladium",
+ "itemListElement": [
+   {"@type": "ListItem", "position": i + 1, "name": n,
+    "url": BASE + "/cases.html" + anchor}
+   for i, (n, anchor) in enumerate([
+     ("Недвижимость: заявка перестала ждать менеджера, отчёты собираются сами", "#c1"),
+     ("Видеопродакшн: рекламные ролики полного цикла без съёмочной группы", "#c2"),
+     ("Закупки: отдел, который за ночь обходит весь рынок", "#c3"),
+     ("Контроль звонков: разобран каждый разговор, а не пара записей в неделю", "#c4"),
+   ])],
+}
+
 JSONLD = {
  "index.html":    [ORG, WEBSITE, FAQPAGE],
- "cases.html":    [crumbs("Кейсы", "/cases.html")],
+ "cases.html":    [crumbs("Кейсы", "/cases.html"), CASES_LIST],
  "products.html": [crumbs("12 продуктов", "/products.html"), CATALOG],
 }
 
 # ---------------------------------------------------------------- шаблоны
 
-def static_head(title, desc, path, lds):
+def static_head(title, og_title, desc, path, lds):
     og_img = BASE + "/og-image.jpg"
     tags = [
      f"<title>{title}</title>",
@@ -280,7 +317,9 @@ def static_head(title, desc, path, lds):
      '<meta name="theme-color" content="#050a1e">',
      f'<link rel="canonical" href="{BASE}{path}">',
      f'<link rel="icon" href="{FAVICON}">',
-     f'<meta property="og:title" content="{title}">',
+     '<link rel="icon" type="image/x-icon" sizes="32x32" href="/favicon.ico">',
+     '<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
+     f'<meta property="og:title" content="{og_title}">',
      f'<meta property="og:description" content="{desc}">',
      f'<meta property="og:url" content="{BASE}{path}">',
      '<meta property="og:type" content="website">',
@@ -293,6 +332,10 @@ def static_head(title, desc, path, lds):
      '<meta name="twitter:card" content="summary_large_image">',
      f'<meta name="twitter:image" content="{og_img}">',
     ]
+    if YANDEX_VERIFICATION:
+        tags.append(f'<meta name="yandex-verification" content="{YANDEX_VERIFICATION}">')
+    if GOOGLE_VERIFICATION:
+        tags.append(f'<meta name="google-site-verification" content="{GOOGLE_VERIFICATION}">')
     for i, ld in enumerate(lds):
         tags.append(f'<script type="application/ld+json" id="pd-ld-{i}">'
                     + json.dumps(ld, ensure_ascii=False) + "</script>")
@@ -339,6 +382,7 @@ GUARD = """<script>(function(){
     for(var k in C.metaName)meta('name',k,C.metaName[k]);
     for(var k in C.metaProperty)meta('property',k,C.metaProperty[k]);
     link('icon',C.favicon); link('canonical',C.canonical);
+    link('apple-touch-icon','/apple-touch-icon.png');
     if(!document.getElementById('pd-style')){
       var s=document.createElement('style');s.id='pd-style';s.textContent=C.css;
       document.head.appendChild(s);
@@ -484,6 +528,9 @@ GUARD = """<script>(function(){
     })();
   }
   // Клик по якорю — явная просьба доскроллить: снимает прежний запрет.
+  // Здесь же цели Метрики: клики по контактам — главные конверсии сайта.
+  // Имена целей фиксированы, под них заводятся JS-цели в кабинете Метрики:
+  // click_phone, click_whatsapp, click_telegram, click_email.
   window.addEventListener('hashchange',function(){userTouched=false;startGlide();});
   document.addEventListener('click',function(e){
     var n=e.target;
@@ -491,6 +538,11 @@ GUARD = """<script>(function(){
     if(!n||n.nodeType!==1)return;
     var href=n.getAttribute('href')||'';
     if(href.indexOf('#')>=0){userTouched=false;setTimeout(startGlide,80);}
+    var goal=href.indexOf('tel:')===0?'click_phone'
+      :href.indexOf('wa.me')>=0?'click_whatsapp'
+      :href.indexOf('t.me')>=0?'click_telegram'
+      :href.indexOf('mailto:')===0?'click_email':null;
+    if(goal&&C.metrika&&typeof ym==='function')ym(C.metrika,'reachGoal',goal);
   },true);
   // Тики syncNav: пока пользователь не вмешался и цель далеко — перезапускаем.
   function fixHash(){
@@ -593,7 +645,7 @@ GUARD = """<script>(function(){
 # ---------------------------------------------------------------- сборка
 
 def build():
-    for name, (srcname, title, desc, path) in PAGES.items():
+    for name, (srcname, title, og_title, desc, path) in PAGES.items():
         html = (SRC / srcname).read_text(encoding="utf-8")
         for a, b in LINKS:
             html = html.replace(a, b)
@@ -613,7 +665,7 @@ def build():
         html = html.replace("<html>", '<html lang="ru">', 1)
         assert "<title>Bundled Page</title>" in html, name
         html = html.replace("<title>Bundled Page</title>",
-                            static_head(title, desc, path, JSONLD[name]), 1)
+                            static_head(title, og_title, desc, path, JSONLD[name]), 1)
 
         # 3. Пререндер сразу после строки «Unpacking...»
         pre = (PRERENDER_DIR / name).read_text(encoding="utf-8")
@@ -626,19 +678,25 @@ def build():
         html = re.sub(r"<noscript>.*?</noscript>", NOSCRIPT, html, count=1, flags=re.S)
 
         # 5. Скрипт-хранитель перед </body>
+        meta_name = {"description": desc, "theme-color": "#050a1e",
+                     "twitter:card": "summary_large_image",
+                     "twitter:image": BASE + "/og-image.jpg"}
+        if YANDEX_VERIFICATION:
+            meta_name["yandex-verification"] = YANDEX_VERIFICATION
+        if GOOGLE_VERIFICATION:
+            meta_name["google-site-verification"] = GOOGLE_VERIFICATION
         cfg = json.dumps({
           "title": title, "lang": "ru", "favicon": FAVICON, "canonical": BASE + path,
           "css": NAV_HINT,
-          "metaName":     {"description": desc, "theme-color": "#050a1e",
-                           "twitter:card": "summary_large_image",
-                           "twitter:image": BASE + "/og-image.jpg"},
-          "metaProperty": {"og:title": title, "og:description": desc, "og:url": BASE + path,
+          "metaName":     meta_name,
+          "metaProperty": {"og:title": og_title, "og:description": desc, "og:url": BASE + path,
                            "og:type": "website", "og:locale": "ru_RU", "og:site_name": "Palladium",
                            "og:image": BASE + "/og-image.jpg",
                            "og:image:width": "1200", "og:image:height": "630",
                            "og:image:alt": "Palladium — AI-интегратор"},
           "jsonld": JSONLD[name],
           "wa": {"num": WA_NUM, "text": WA_TEXT},
+          "metrika": METRIKA_ID,
           "slotImages": slot_images_for(name),
           "hiddenSlots": HIDDEN_SLOTS.get(name, []),
           "extra": extra_for(name),

@@ -29,6 +29,7 @@ AI-интегратор. Статический сайт на GitHub Pages, до
 python3 build/build.py
 git diff        # посмотреть, что поменялось
 git add -A && git commit && git push
+python3 build/indexnow.py   # после деплоя: сообщить Яндексу и Bing об изменениях
 ```
 
 `build/build.py` делает всё сам: переименование, переписывание внутренних ссылок,
