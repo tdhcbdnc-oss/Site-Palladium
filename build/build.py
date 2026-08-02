@@ -90,6 +90,13 @@ SLOT_IMAGES = {
  },
 }
 
+# Слоты под изображения, которые не нужны вовсе: картинки туда не планируются,
+# а пустой слот занимает место и рисует рамку с засечками. Убираем весь блок
+# .blueprint (рамка + угловые засечки + отступ), а не только сам слот.
+HIDDEN_SLOTS = {
+ "index.html": ["pd-team"],   # раздел «Команда Palladium» — фото не будет
+}
+
 NAV_HINT = """
 /* Подсказка прокрутки у правого края строки навигации.
    Липкий нулевой элемент в конце строки — обёртки нет, чтобы не ломать
@@ -127,6 +134,9 @@ image-slot::part(empty){display:none!important}
 .blueprint.duotone.pd-nofilter::after{
   mix-blend-mode:normal!important;background:transparent!important;
 }
+
+/* Блок с ненужным слотом убираем целиком, вместе с рамкой и отступом. */
+.pd-slothidden{display:none!important}
 """
 
 # Картинку подставляем, только если файл реально лежит на диске: пока его нет,
@@ -344,6 +354,15 @@ GUARD = """<script>(function(){
         if(bp)bp.classList.add('pd-nofilter');
       }
     }
+    // Ненужные слоты: прячем весь блок .blueprint — иначе останется пустая
+    // рамка с засечками и её отступ. Если обёртки нет, поднимаемся на два
+    // уровня: слот → контейнер с пропорцией → блок.
+    for(var k=0;k<(C.hiddenSlots||[]).length;k++){
+      var h=document.getElementById(C.hiddenSlots[k]);
+      if(!h)continue;
+      var box=h.closest('.blueprint')||(h.parentElement&&h.parentElement.parentElement);
+      if(box&&!box.classList.contains('pd-slothidden'))box.classList.add('pd-slothidden');
+    }
   }
   // Карточка «Сайт → palladium.com.ru» в контактах ссылается сама на себя и не
   // приносит пользы — превращаем её в прямой переход в WhatsApp с готовым
@@ -539,6 +558,7 @@ def build():
           "jsonld": JSONLD[name],
           "wa": {"num": WA_NUM, "text": WA_TEXT},
           "slotImages": slot_images_for(name),
+          "hiddenSlots": HIDDEN_SLOTS.get(name, []),
         }, ensure_ascii=False)
 
         # 7. Метрика + скрипт-хранитель перед </body>
