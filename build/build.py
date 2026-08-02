@@ -63,9 +63,20 @@ TEXT_FIXES = [
   "AI Audit: текст говорил «две-три недели», чип срока — «1–2 недели»"),
  ("products.html", "За две-три недели разбираем", "За одну-две недели разбираем",
   "AI Audit: текст говорил «две-три недели», чип срока — «1–2 недели»"),
+ # Смена позиционирования 02.08: единая подпись «Независимая альтернатива Palantir
+ # из Донецка» вместо «AI-интегратор · продукты и услуги · 2026» — в шапке и подвалах.
  ("index.html", "AI-интегратор · продукты и услуги · 2026",
-  "Palladium — независимая альтернатива Palantir из Донецка",
-  "подпись под логотипом в шапке: смена позиционирования (правка Тимура 02.08)"),
+  "Независимая альтернатива Palantir из Донецка",
+  "подпись под логотипом в шапке главной"),
+ ("index.html", "PALLADIUM · AI-интегратор",
+  "PALLADIUM · Независимая альтернатива Palantir из Донецка", "левая часть подвала"),
+ ("cases.html", "PALLADIUM · AI-интегратор",
+  "PALLADIUM · Независимая альтернатива Palantir из Донецка", "левая часть подвала"),
+ ("products.html", "PALLADIUM · AI-интегратор",
+  "PALLADIUM · Независимая альтернатива Palantir из Донецка", "левая часть подвала"),
+ ("index.html", "Продукты и услуги · 2026", "2026", "правая часть подвала"),
+ ("cases.html", "Продукты и услуги · 2026", "2026", "правая часть подвала"),
+ ("products.html", "Продукты и услуги · 2026", "2026", "правая часть подвала"),
 ]
 
 # Картинки в слоты под изображения. Заливка через канвас Claude Design не доходит
@@ -145,7 +156,8 @@ ORG = {
  "@context": "https://schema.org", "@type": "Organization",
  "@id": BASE + "/#org", "name": "Palladium", "url": BASE + "/",
  "logo": BASE + "/og-image.jpg",
- "description": "AI-интегратор: проектируем, внедряем и сопровождаем AI-системы, "
+ "description": "Независимая альтернатива Palantir из Донецка: проектируем, внедряем "
+                "и сопровождаем AI-системы, "
                 "которые остаются в собственности клиента — на его серверах и в его аккаунтах.",
  "email": "info@palladium.com.ru", "telephone": "+79490209308",
  "contactPoint": {"@type": "ContactPoint", "telephone": "+79490209308",
@@ -243,7 +255,7 @@ def static_head(title, desc, path, lds):
      f'<meta property="og:image" content="{og_img}">',
      '<meta property="og:image:width" content="1200">',
      '<meta property="og:image:height" content="630">',
-     '<meta property="og:image:alt" content="Palladium — AI-интегратор">',
+     '<meta property="og:image:alt" content="Palladium — независимая альтернатива Palantir из Донецка">',
      '<meta name="twitter:card" content="summary_large_image">',
      f'<meta name="twitter:image" content="{og_img}">',
     ]
@@ -533,7 +545,7 @@ def build():
                            "og:type": "website", "og:locale": "ru_RU", "og:site_name": "Palladium",
                            "og:image": BASE + "/og-image.jpg",
                            "og:image:width": "1200", "og:image:height": "630",
-                           "og:image:alt": "Palladium — AI-интегратор"},
+                           "og:image:alt": "Palladium — независимая альтернатива Palantir из Донецка"},
           "jsonld": JSONLD[name],
           "wa": {"num": WA_NUM, "text": WA_TEXT},
           "slotImages": slot_images_for(name),
