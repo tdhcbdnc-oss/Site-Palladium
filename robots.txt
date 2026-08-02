@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: http://palladium.com.ru/sitemap.xml
+Sitemap: https://palladium.com.ru/sitemap.xml
