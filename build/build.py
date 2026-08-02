@@ -65,6 +65,18 @@ TEXT_FIXES = [
   "AI Audit: текст говорил «две-три недели», чип срока — «1–2 недели»"),
 ]
 
+# Картинки в слоты под изображения. Заливка через канвас Claude Design не доходит
+# до экспорта (хранится в .image-slots.state.json, которого в выгрузке нет), поэтому
+# кладём файл в images/ и подставляем его поверх слота при сборке.
+# Ключ — id слота, значение — (файл относительно корня, alt).
+SLOT_IMAGES = {
+ "cases.html": {
+   "pd-case1": ("images/case1-crm.jpg",
+     "Рабочие инструменты после внедрения: сводная таблица показателей агента, "
+     "карточка объекта и уведомления координатора в Telegram"),
+ },
+}
+
 NAV_HINT = """
 /* Подсказка прокрутки у правого края строки навигации.
    Липкий нулевой элемент в конце строки — обёртки нет, чтобы не ломать
@@ -88,7 +100,28 @@ NAV_HINT = """
    заглушкой «перетащите файл» и кнопками Replace/Edit. Посетителям это видеть
    не нужно — гасим. Когда в слот попадёт картинка, она отрисуется как обычно. */
 image-slot::part(empty){display:none!important}
+
+/* Картинка, подставленная в слот при сборке. Ложится поверх пустого слота
+   в его же контейнер (у того position:relative и заданная пропорция),
+   поэтому кадрируется ровно по рамке. Синяя подложка duotone из дизайн-системы
+   лежит выше и накрывает картинку — так и задумано. */
+.pd-slotimg{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;display:block;
+}
 """
+
+# Картинку подставляем, только если файл реально лежит на диске: пока его нет,
+# слот остаётся пустым, а не ломается битой ссылкой. Сборка при этом предупреждает.
+def slot_images_for(page):
+    out = {}
+    for slot_id, (rel, alt) in SLOT_IMAGES.get(page, {}).items():
+        if (REPO / rel).exists():
+            out[slot_id] = [rel, alt]
+        else:
+            print(f"  ! {page}: файла {rel} нет — слот {slot_id} оставлен пустым")
+    return out
+
 
 # ---------------------------------------------------------------- JSON-LD
 
@@ -273,6 +306,20 @@ GUARD = """<script>(function(){
       st.id='pd-slotfix';
       st.textContent='.empty{display:none!important}.ctl,.spill{display:none!important}';
       r.appendChild(st);
+    }
+    // Подстановка картинок в слоты: кладём <img> рядом со слотом, в его контейнер.
+    // Внутрь самого image-slot не лезем — там shadow DOM со своей логикой кадрирования.
+    for(var id in C.slotImages){
+      var host=document.getElementById(id);
+      if(!host)continue;
+      var box=host.parentElement;
+      if(!box||box.querySelector('img.pd-slotimg'))continue;
+      var im=document.createElement('img');
+      im.className='pd-slotimg';
+      im.src=C.slotImages[id][0];
+      im.alt=C.slotImages[id][1];
+      im.decoding='async';
+      box.appendChild(im);
     }
   }
   // Карточка «Сайт → palladium.com.ru» в контактах ссылается сама на себя и не
@@ -468,6 +515,7 @@ def build():
                            "og:image:alt": "Palladium — AI-интегратор"},
           "jsonld": JSONLD[name],
           "wa": {"num": WA_NUM, "text": WA_TEXT},
+          "slotImages": slot_images_for(name),
         }, ensure_ascii=False)
 
         # 7. Метрика + скрипт-хранитель перед </body>
