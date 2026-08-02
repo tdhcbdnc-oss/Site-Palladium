@@ -68,12 +68,15 @@ TEXT_FIXES = [
 # Картинки в слоты под изображения. Заливка через канвас Claude Design не доходит
 # до экспорта (хранится в .image-slots.state.json, которого в выгрузке нет), поэтому
 # кладём файл в images/ и подставляем его поверх слота при сборке.
-# Ключ — id слота, значение — (файл относительно корня, alt).
+# Ключ — id слота, значение — (файл относительно корня, alt, снять_duotone).
+# Третий флаг убирает синюю подложку дизайн-системы: у неё mix-blend-mode: color,
+# то есть от картинки остаётся только светлота, а цвета заменяются на фирменный синий.
+# Для скриншотов интерфейсов это съедает читаемость — там флаг включаем.
 SLOT_IMAGES = {
  "cases.html": {
    "pd-case1": ("images/case1-crm.jpg",
      "Рабочие инструменты после внедрения: сводная таблица показателей агента, "
-     "карточка объекта и уведомления координатора в Telegram"),
+     "карточка объекта и уведомления координатора в Telegram", True),
  },
 }
 
@@ -103,11 +106,16 @@ image-slot::part(empty){display:none!important}
 
 /* Картинка, подставленная в слот при сборке. Ложится поверх пустого слота
    в его же контейнер (у того position:relative и заданная пропорция),
-   поэтому кадрируется ровно по рамке. Синяя подложка duotone из дизайн-системы
-   лежит выше и накрывает картинку — так и задумано. */
+   поэтому кадрируется ровно по рамке. */
 .pd-slotimg{
   position:absolute;inset:0;width:100%;height:100%;
   object-fit:cover;object-position:center;display:block;
+}
+
+/* Снятие синей подложки duotone для отдельных слотов. Сам ::after не убираем —
+   он может нести рамку блюпринта: гасим только заливку и режим наложения. */
+.blueprint.duotone.pd-nofilter::after{
+  mix-blend-mode:normal!important;background:transparent!important;
 }
 """
 
@@ -115,9 +123,9 @@ image-slot::part(empty){display:none!important}
 # слот остаётся пустым, а не ломается битой ссылкой. Сборка при этом предупреждает.
 def slot_images_for(page):
     out = {}
-    for slot_id, (rel, alt) in SLOT_IMAGES.get(page, {}).items():
+    for slot_id, (rel, alt, nofilter) in SLOT_IMAGES.get(page, {}).items():
         if (REPO / rel).exists():
-            out[slot_id] = [rel, alt]
+            out[slot_id] = [rel, alt, bool(nofilter)]
         else:
             print(f"  ! {page}: файла {rel} нет — слот {slot_id} оставлен пустым")
     return out
@@ -320,6 +328,11 @@ GUARD = """<script>(function(){
       im.alt=C.slotImages[id][1];
       im.decoding='async';
       box.appendChild(im);
+      // Снятие синей подложки, если для слота так задано.
+      if(C.slotImages[id][2]){
+        var bp=host.closest('.duotone');
+        if(bp)bp.classList.add('pd-nofilter');
+      }
     }
   }
   // Карточка «Сайт → palladium.com.ru» в контактах ссылается сама на себя и не
