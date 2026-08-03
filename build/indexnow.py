@@ -13,6 +13,8 @@ URLS = [
     f"https://{HOST}/",
     f"https://{HOST}/cases.html",
     f"https://{HOST}/products.html",
+    f"https://{HOST}/chat-boty.html",
+    f"https://{HOST}/ai-audit.html",
 ]
 
 ENDPOINTS = ["https://yandex.com/indexnow", "https://api.indexnow.org/indexnow"]

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<!--HEAD-->
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#050a1e;color:#dfe7f5;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+a{color:#7fd4f0}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+header{background:#eef1f5;padding:14px 0}
+header .wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.logo{font-weight:700;letter-spacing:.32em;color:#0b1526;text-decoration:none;font-size:15px}
+nav.top{display:flex;gap:16px;flex-wrap:wrap;margin-right:auto}
+nav.top a{color:#33415c;text-decoration:none;font-size:14px}
+nav.top a:hover{color:#0b1526}
+.btn{display:inline-block;background:#45699c;color:#fff;text-decoration:none;
+  padding:11px 20px;font-size:15px;border:1px solid #33507a}
+.btn:hover{background:#3a5a88}
+.btn.ghost{background:transparent;color:#cfe0f2;border:1px solid rgba(127,212,240,.4)}
+.btn.ghost:hover{border-color:#7fd4f0;color:#fff}
+.hero{padding:56px 0 40px}
+.tag{color:#8fb6d6;text-transform:uppercase;letter-spacing:.16em;font-size:12px;margin-bottom:16px}
+h1{color:#f2f6ff;font-size:clamp(28px,4.6vw,42px);line-height:1.18;margin-bottom:18px;font-weight:700}
+.lead{font-size:18px;color:#c9d6ea;max-width:720px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:26px 0 30px}
+.chips span{border:1px solid rgba(127,212,240,.35);padding:9px 14px;font-size:14px;color:#cfe0f2}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap}
+section{padding:34px 0 6px}
+h2{color:#f2f6ff;font-size:clamp(22px,3.2vw,28px);line-height:1.25;margin-bottom:16px}
+h3{color:#cfe0f2;font-size:18px;margin-bottom:6px}
+p{margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin:10px 0 8px}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(127,212,240,.15);padding:18px}
+.card p{margin:0;font-size:15px;color:#c2cfe3}
+ol.steps{list-style:none;counter-reset:s;margin:8px 0}
+ol.steps li{counter-increment:s;padding:14px 0 14px 56px;position:relative;border-bottom:1px solid rgba(127,212,240,.12)}
+ol.steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:14px;
+  color:#7fd4f0;font-weight:700;font-size:22px;letter-spacing:.05em}
+details{border-bottom:1px solid rgba(127,212,240,.14);padding:4px 0}
+summary{cursor:pointer;padding:13px 0;color:#e8eefb;font-weight:600;font-size:16px}
+summary:hover{color:#7fd4f0}
+details p{color:#c2cfe3;padding:0 0 14px;font-size:15px}
+.case{background:rgba(127,212,240,.06);border-left:3px solid #7fd4f0;padding:18px 20px;margin:8px 0}
+.cta-final{margin:44px 0 26px;background:rgba(255,255,255,.04);border:1px solid rgba(127,212,240,.2);padding:30px 26px}
+.contacts{display:flex;gap:20px;flex-wrap:wrap;margin-top:18px;font-size:15px}
+footer{border-top:1px solid rgba(127,212,240,.14);margin-top:40px;padding:24px 0 40px;
+  font-size:12.5px;color:#8fb6d6;text-transform:uppercase;letter-spacing:.12em}
+footer .wrap{display:flex;gap:18px;flex-wrap:wrap}
+footer a{color:#8fb6d6;text-decoration:none}
+footer a:hover{color:#dfe7f5}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="/">PALLADIUM</a>
+    <nav class="top">
+      <a href="/">Главная</a>
+      <a href="/cases.html">Кейсы</a>
+      <a href="/products.html">12 продуктов</a>
+      <a href="/ai-audit.html">AI-аудит</a>
+    </nav>
+    <a class="btn" href="/#kontakty">Записаться на разбор</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="tag">Palladium · клиентские AI-ассистенты</p>
+    <h1>AI-чат-боты, которые отвечают и продают за вас — на сайте, в WhatsApp и Telegram</h1>
+    <p class="lead">Клиент пишет вечером, ночью, в выходной — и уходит к тому, кто ответил первым.
+    AI-ассистент отвечает за секунды в любое время: консультирует, уточняет задачу, собирает
+    заявку и передаёт менеджеру готовый контекст разговора. Конверсия растёт без роста трафика.</p>
+    <div class="chips">
+      <span>ответ за секунды, 24/7</span>
+      <span>заявка сразу в CRM</span>
+      <span>знает ваши продукты, а не «интернет»</span>
+      <span>в вашей собственности</span>
+    </div>
+    <div class="cta-row">
+      <a class="btn" href="/#kontakty">Записаться на 30-минутный разбор</a>
+      <a class="btn ghost" href="https://wa.me/79490209308?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%98%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D1%83%D0%B5%D1%82%20AI-%D1%87%D0%B0%D1%82-%D0%B1%D0%BE%D1%82." target="_blank" rel="noopener">Написать в WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <h2>Что умеет бот, которого мы внедряем</h2>
+    <div class="grid">
+      <div class="card"><h3>Консультирует по вашей базе</h3><p>Отвечает по вашим прайсам, регламентам
+        и документам — не выдумывает. На вопрос вне своей темы честно говорит, что позовёт человека.</p></div>
+      <div class="card"><h3>Собирает заявку до конца</h3><p>Задаёт уточняющие вопросы, как ваш лучший
+        менеджер: что нужно, когда, какой бюджет. Недособранных «оставьте телефон» не бывает.</p></div>
+      <div class="card"><h3>Передаёт эстафету человеку</h3><p>Менеджер получает не «клиент что-то хотел»,
+        а краткое содержание разговора, контакты и приоритет лида.</p></div>
+      <div class="card"><h3>Пишет в CRM сам</h3><p>Заявка не живёт в переписке — она сразу карточка
+        сделки с историей. Ничего не теряется между чатом и отделом продаж.</p></div>
+      <div class="card"><h3>Работает там, где клиенты</h3><p>Виджет на сайте, WhatsApp, Telegram —
+        один мозг, все каналы. Отвечает голосовыми, если клиенту так удобнее.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Чем это отличается от бота-конструктора</h2>
+    <p>Конструктор даёт дерево кнопок: «нажмите 1, чтобы…». Живой вопрос ломает сценарий,
+    клиент злится, бот зовёт оператора — которого в 23:40 нет.</p>
+    <p>Мы строим ассистента на языковой модели, обученного на ваших материалах и встроенного
+    в ваши процессы: CRM, календарь, телефония, склад. И главное — <strong>система остаётся
+    в вашей собственности</strong>: код, промпты, база знаний, история диалогов. Уйдёте от нас —
+    всё заберёте с собой. Для отраслей с чувствительными данными разворачиваем локальные модели:
+    переписка не покидает ваши серверы.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Как проходит внедрение</h2>
+    <ol class="steps">
+      <li><strong>Разбор — 30 минут, бесплатно.</strong> Смотрим, где теряются обращения
+        и что бот закроет.</li>
+      <li><strong>Диагностика — до недели.</strong> Каналы, сценарии, база знаний, KPI «до».</li>
+      <li><strong>Пилот — 10–14 рабочих дней.</strong> Бот в одном канале на реальных клиентах.
+        Слушаем диалоги, докручиваем.</li>
+      <li><strong>Запуск и сопровождение.</strong> Остальные каналы, обучение команды, регламенты.
+        Дальше — поддержка по SLA: следим за качеством ответов, добавляем сценарии.</li>
+    </ol>
+    <p>Оплата внедрения — фиксированная, известна до старта. Сопровождение — фиксированной
+    суммой в месяц, без «оплаты за сообщения», которая растёт вместе с успехом.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Пример из практики</h2>
+    <div class="case">
+      <p>Агентство недвижимости: входящая заявка с площадок попадает в CRM и получает ответ
+      в WhatsApp в течение минуты — с приоритетом по качеству лида. Ответ на заявку сократился
+      с часов до минуты, 75% времени координатора освободилось.</p>
+      <p style="margin:10px 0 0"><a href="/cases.html">Подробнее в кейсах →</a></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Частые вопросы</h2>
+    <details><summary>Сколько стоит чат-бот?</summary>
+      <p>Внедрение — фикс, зависит от числа каналов и интеграций; называем цену после бесплатного
+      разбора, до старта работ. Сопровождение — фиксированная сумма в месяц. Платы за количество
+      диалогов нет.</p></details>
+    <details><summary>Бот не будет выдумывать и позорить компанию?</summary>
+      <p>Ассистент отвечает только по вашей базе знаний, на вопросы вне неё — передаёт человеку.
+      На пилоте вы читаете реальные диалоги и утверждаете тон и границы. Качество ответов —
+      часть SLA сопровождения.</p></details>
+    <details><summary>У нас нет нормальной CRM и базы знаний. Рано?</summary>
+      <p>Нет. Наведение порядка — часть внедрения: соберём базу из прайсов, переписок и головы
+      вашего лучшего менеджера. Если по-честному рано — так и скажем на разборе.</p></details>
+    <details><summary>Чьи это будут данные и что будет, если мы уйдём?</summary>
+      <p>Ваши. Код, база знаний, промпты, история диалогов — на ваших серверах и в ваших аккаунтах,
+      это записано в договоре. Документацию пишем так, чтобы систему мог принять другой подрядчик.</p></details>
+    <details><summary>Переписка клиентов уйдёт в облачную нейросеть?</summary>
+      <p>По умолчанию используем модели, подходящие под задачу и бюджет. Если данные чувствительные —
+      разворачиваем локальную модель на вашем сервере: переписка не покидает компанию.</p></details>
+    <details><summary>Сколько времени занимает запуск?</summary>
+      <p>Первый работающий канал — обычно 2–3 недели от старта, включая диагностику и пилот.</p></details>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="cta-final">
+    <h2>Посчитаем на вашей воронке</h2>
+    <p>Покажем, сколько обращений теряется сейчас и что из этого закроет ассистент.
+    30 минут, бесплатно, без обязательств. А если вам пока рано — так и скажем.</p>
+    <div class="cta-row" style="margin-top:16px">
+      <a class="btn" href="/#kontakty">Записаться на разбор</a>
+      <a class="btn ghost" href="https://t.me/ShirinTimur" target="_blank" rel="noopener">Написать в Telegram</a>
+    </div>
+    <div class="contacts">
+      <a href="tel:+79490209308">+7 949 020-93-08</a>
+      <a href="mailto:info@palladium.com.ru">info@palladium.com.ru</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>PALLADIUM · AI-интегратор</span>
+    <a href="/">Главная</a>
+    <a href="/cases.html">Кейсы</a>
+    <a href="/products.html">Продукты</a>
+    <a href="/ai-audit.html">AI-аудит</a>
+  </div>
+</footer>
+
+<!--METRIKA-->
+</body>
+</html>

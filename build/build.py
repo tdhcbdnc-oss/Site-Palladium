@@ -111,6 +111,28 @@ SLOT_IMAGES = {
  },
 }
 
+# Посадочные страницы — обычный статический HTML без рантайма канваса.
+# Шаблоны в build/landings/, сборка подставляет <!--HEAD--> и <!--METRIKA-->.
+# Ключ — имя файла в корне сайта, значение — (title, description, path).
+# JSON-LD для них собирается ниже (LANDING_LD), FAQ обязан слово в слово
+# совпадать с видимым текстом страницы — это требование поисковиков.
+LANDINGS = {
+ "chat-boty.html": (
+   "AI-чат-бот для бизнеса: сайт, WhatsApp, Telegram — внедрение под ключ | Palladium",
+   "Внедряем AI-чат-ботов, которые консультируют по вашей базе знаний, собирают заявки и передают менеджеру готовый контекст. Сайт, WhatsApp, Telegram. Система в вашей собственности, пилот за 10–14 дней.",
+   "/chat-boty.html"),
+ "ai-audit.html": (
+   "AI-аудит бизнеса: где теряются время и деньги и что закроет AI | Palladium",
+   "За 1–2 недели разбираем процессы компании: карта потерь в часах и деньгах, задачи под AI с приоритетами, план внедрения с KPI. Фиксированная цена. Результат — план действий, а не презентация.",
+   "/ai-audit.html"),
+}
+
+# Ссылки на посадочные в строке навигации канвас-страниц (дорисовывает хранитель).
+NAV_LANDINGS = [
+ {"href": "chat-boty.html", "label": "Чат-боты"},
+ {"href": "ai-audit.html", "label": "AI-аудит"},
+]
+
 # Дополнительные разделы, которых нет в экспорте канваса. Лежат отдельными
 # файлами в build/extra-cases/ — правятся как обычный HTML, без лазания в сборщик.
 # Вставляются скриптом-хранителем после указанного раздела; тогда же в строку
@@ -285,6 +307,61 @@ def crumbs(name, path):
             "itemListElement": [
               {"@type": "ListItem", "position": 1, "name": "Главная", "item": BASE + "/"},
               {"@type": "ListItem", "position": 2, "name": name, "item": BASE + path}]}
+
+def service_ld(name, desc, path):
+    return {"@context": "https://schema.org", "@type": "Service",
+            "name": name, "description": desc, "url": BASE + path,
+            "provider": {"@id": BASE + "/#org"}, "areaServed": "RU",
+            "availableLanguage": "ru"}
+
+def faq_ld(pairs):
+    return {"@context": "https://schema.org", "@type": "FAQPage",
+            "mainEntity": [{"@type": "Question", "name": q,
+                            "acceptedAnswer": {"@type": "Answer", "text": a}}
+                           for q, a in pairs]}
+
+FAQ_CHATBOT = [
+ ("Сколько стоит чат-бот?",
+  "Внедрение — фикс, зависит от числа каналов и интеграций; называем цену после бесплатного разбора, до старта работ. Сопровождение — фиксированная сумма в месяц. Платы за количество диалогов нет."),
+ ("Бот не будет выдумывать и позорить компанию?",
+  "Ассистент отвечает только по вашей базе знаний, на вопросы вне неё — передаёт человеку. На пилоте вы читаете реальные диалоги и утверждаете тон и границы. Качество ответов — часть SLA сопровождения."),
+ ("У нас нет нормальной CRM и базы знаний. Рано?",
+  "Нет. Наведение порядка — часть внедрения: соберём базу из прайсов, переписок и головы вашего лучшего менеджера. Если по-честному рано — так и скажем на разборе."),
+ ("Чьи это будут данные и что будет, если мы уйдём?",
+  "Ваши. Код, база знаний, промпты, история диалогов — на ваших серверах и в ваших аккаунтах, это записано в договоре. Документацию пишем так, чтобы систему мог принять другой подрядчик."),
+ ("Переписка клиентов уйдёт в облачную нейросеть?",
+  "По умолчанию используем модели, подходящие под задачу и бюджет. Если данные чувствительные — разворачиваем локальную модель на вашем сервере: переписка не покидает компанию."),
+ ("Сколько времени занимает запуск?",
+  "Первый работающий канал — обычно 2–3 недели от старта, включая диагностику и пилот."),
+]
+
+FAQ_AUDIT = [
+ ("Чем это отличается от «бесплатного аудита» от студий?",
+  "Бесплатный аудит — это продажа: его цель показать, что вам всё нужно. Наш аудит — платный продукт с фиксированной ценой, и его результат принадлежит вам. В нём есть раздел «что не нужно делать» — бесплатные аудиты таким не заканчиваются."),
+ ("У нас беспорядок в данных, CRM ведётся кое-как. Есть смысл?",
+  "Да — беспорядок и есть типичная точка старта. Аудит покажет, что можно запускать уже сейчас, а где сначала нужен порядок в данных и сколько это займёт."),
+ ("Нужно ли отвлекать команду?",
+  "Интервью — 30–60 минут на человека, по графику, который не ломает работу. Доступы к системам обсуждаем заранее; чувствительные данные можем разбирать на вашей территории и на локальных инструментах."),
+ ("Мы небольшая компания — аудит это не для корпораций?",
+  "Для компании из 5–15 человек есть экспресс-формат: разбор одного отдела или одного процесса за несколько дней. На знакомстве подберём формат под размер."),
+ ("Что если окажется, что AI нам не нужен?",
+  "Так и напишем — с обоснованием и расчётом. Вы сэкономите на внедрении, которое не окупилось бы. Для нас это тоже результат: репутация дороже одного контракта."),
+]
+
+LANDING_LD = {
+ "chat-boty.html": [
+   crumbs("AI-чат-боты", "/chat-boty.html"),
+   service_ld("Внедрение AI-чат-ботов",
+              "AI-ассистенты для сайта, WhatsApp и Telegram: консультируют по базе знаний компании, собирают заявки, передают менеджеру контекст разговора, пишут в CRM.",
+              "/chat-boty.html"),
+   faq_ld(FAQ_CHATBOT)],
+ "ai-audit.html": [
+   crumbs("AI-аудит", "/ai-audit.html"),
+   service_ld("AI-аудит бизнеса",
+              "Аудит процессов компании за 1–2 недели: карта потерь в часах и деньгах, список задач под AI с приоритетами, план внедрения с KPI. Фиксированная цена.",
+              "/ai-audit.html"),
+   faq_ld(FAQ_AUDIT)],
+}
 
 CASES_LIST = {
  "@context": "https://schema.org", "@type": "ItemList",
@@ -582,6 +659,27 @@ GUARD = """<script>(function(){
       prev=a;
     }
   }
+  // Ссылки на посадочные страницы в конце строки навигации (перед подсказкой
+  // прокрутки). Рантайм пересобирает навигацию — функция идемпотентна.
+  function addNavLinks(){
+    if(!C.navLinks)return;
+    var row=document.querySelector('nav [data-navlinks]');
+    if(!row)return;
+    var proto=row.querySelector('a[href]');
+    for(var i=0;i<C.navLinks.length;i++){
+      var it=C.navLinks[i];
+      if(row.querySelector('a[href="'+it.href+'"]'))continue;
+      var a=document.createElement('a');
+      a.setAttribute('href',it.href);
+      a.textContent=it.label;
+      if(proto){
+        var st=proto.getAttribute('style'); if(st)a.setAttribute('style',st);
+        var sh=proto.getAttribute('style-hover'); if(sh)a.setAttribute('style-hover',sh);
+      }
+      var hint=row.querySelector(':scope > i.pd-hint');
+      if(hint)row.insertBefore(a,hint);else row.appendChild(a);
+    }
+  }
   function scrollers(){
     var list=document.querySelectorAll('nav [data-navlinks]');
     if(list.length)return list;
@@ -616,6 +714,7 @@ GUARD = """<script>(function(){
       if(sc.getAttribute('data-more')!==val)sc.setAttribute('data-more',val);
     }
     addExtra();
+    addNavLinks();
     fixSlots();
     fixLd();
     fixWa();
@@ -697,6 +796,7 @@ def build():
           "jsonld": JSONLD[name],
           "wa": {"num": WA_NUM, "text": WA_TEXT},
           "metrika": METRIKA_ID,
+          "navLinks": NAV_LANDINGS,
           "slotImages": slot_images_for(name),
           "hiddenSlots": HIDDEN_SLOTS.get(name, []),
           "extra": extra_for(name),
@@ -709,10 +809,27 @@ def build():
         (OUT / name).write_text(html, encoding="utf-8")
         print(f"{name:15s} → {title}")
 
+    # Посадочные: обычный HTML, подставляем head, Метрику и цели.
+    goals_js = ("""<script>document.addEventListener('click',function(e){
+var n=e.target;while(n&&n.nodeType===1&&n.tagName!=='A')n=n.parentNode;
+if(!n||n.nodeType!==1)return;var h=n.getAttribute('href')||'';
+var g=h.indexOf('tel:')===0?'click_phone':h.indexOf('wa.me')>=0?'click_whatsapp'
+:h.indexOf('t.me')>=0?'click_telegram':h.indexOf('mailto:')===0?'click_email':null;
+if(g&&typeof ym==='function')ym(""" + METRIKA_ID + """,'reachGoal',g);},true);</script>""")
+    landings_dir = pathlib.Path(__file__).resolve().parent / "landings"
+    for name, (title, desc, path) in LANDINGS.items():
+        tpl = (landings_dir / name).read_text(encoding="utf-8")
+        assert "<!--HEAD-->" in tpl and "<!--METRIKA-->" in tpl, name
+        tpl = tpl.replace("<!--HEAD-->", static_head(title, title, desc, path, LANDING_LD[name]), 1)
+        tpl = tpl.replace("<!--METRIKA-->", (metrika_tag() if METRIKA_ID else "") + goals_js, 1)
+        (OUT / name).write_text(tpl, encoding="utf-8")
+        print(f"{name:15s} → {title[:60]}")
+
     (OUT / "robots.txt").write_text(
         "User-agent: *\nAllow: /\n\nSitemap: " + BASE + "/sitemap.xml\n")
 
-    urls = [("/", "1.0"), ("/products.html", "0.8"), ("/cases.html", "0.8")]
+    urls = [("/", "1.0"), ("/products.html", "0.8"), ("/cases.html", "0.8"),
+            ("/chat-boty.html", "0.8"), ("/ai-audit.html", "0.8")]
     items = "\n".join(
         f"  <url>\n    <loc>{BASE}{p}</loc>\n    <lastmod>{TODAY}</lastmod>\n"
         f"    <changefreq>monthly</changefreq>\n    <priority>{pr}</priority>\n  </url>"
