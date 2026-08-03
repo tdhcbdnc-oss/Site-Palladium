@@ -36,7 +36,7 @@ METRIKA_ID = "111244444"
 # вписать содержимое content их мета-тегов — сборка добавит теги в <head>.
 # Яндекс.Вебмастер: <meta name="yandex-verification" content="...">
 # Google Search Console: <meta name="google-site-verification" content="...">
-YANDEX_VERIFICATION = None
+YANDEX_VERIFICATION = "547ee5d5867898fe"
 GOOGLE_VERIFICATION = None
 
 # Ключ IndexNow (файл <KEY>.txt лежит в корне сайта, пинг — build/indexnow.py).
